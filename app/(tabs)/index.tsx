@@ -1,74 +1,134 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Pressable,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { Link } from "expo-router";
+import TextInput from "@/app/components/TextInput";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useState } from "react";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const categories = ["Electronics", "Clothing", "Home", "Beauty", "Toys"];
+const featuredProducts = [
+  {
+    id: "1",
+    name: "Smartphone",
+    image: "",
+  },
+  { id: "2", name: "Sneakers", image: "" },
+  { id: "3", name: "Laptop", image: "" },
+];
 
 export default function HomeScreen() {
+  const [search, setSearch] = useState("");
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      <View style={styles.topBar}>
+        {/* Search Bar */}
+        <TextInput
+          placeholder="Search for products..."
+          value={search}
+          onChangeText={setSearch}
+          style={styles.searchBar}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+        <Link href="/cart" asChild style={styles.cart}>
+          <Pressable>
+            <IconSymbol size={28} name="cart.fill" color={"blue"} />
+          </Pressable>
+        </Link>
+      </View>
+      {/* Banner */}
+      <Image
+        source={{ uri: "https://via.placeholder.com/300x150" }}
+        style={styles.banner}
+      />
+
+      {/* Categories */}
+      <Text style={styles.sectionTitle}>Categories</Text>
+      <FlatList
+        horizontal
+        data={categories}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.categoryItem}>
+            <Text style={styles.categoryText}>{item}</Text>
+          </TouchableOpacity>
+        )}
+      />
+
+      {/* Featured Products */}
+      <Text style={styles.sectionTitle}>Featured Products</Text>
+      <FlatList
+        horizontal
+        data={featuredProducts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.productItem}>
+            <Image source={{ uri: item.image }} style={styles.productImage} />
+            <Text>{item.name}</Text>
+          </View>
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#fff",
   },
-  stepContainer: {
-    gap: 8,
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  searchBar: {
+    width: "100%",
+    marginBottom: 16,
+  },
+  cart: {
+    height: 40,
+    marginVertical: 12,
+    marginHorizontal: 5,
+    paddingVertical: 10,
+  },
+  banner: {
+    width: "100%",
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  categoryItem: {
+    padding: 10,
+    backgroundColor: "#eee",
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  productItem: {
+    width: 120,
+    marginRight: 10,
+    alignItems: "center",
+  },
+  productImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
   },
 });
